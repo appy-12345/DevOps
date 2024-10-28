@@ -1,0 +1,158 @@
+Step 1: Install Jenkins
+Download Jenkins:
+
+Visit the Jenkins download page and choose the installation method that suits your operating system (Windows, macOS, Linux).
+Install Jenkins:
+
+Follow the installation instructions specific to your OS. For Windows, run the installer, and for Linux, you may need to use package managers like apt or yum.
+Start Jenkins:
+
+Once installed, start Jenkins. Usually, it runs on port 8080. Open your web browser and go to http://localhost:8080.
+Unlock Jenkins:
+
+During the first launch, you'll be prompted to unlock Jenkins using a password found in the logs or in a file (usually located at /var/lib/jenkins/secrets/initialAdminPassword).
+Install Suggested Plugins:
+
+After unlocking, Jenkins will prompt you to install plugins. Choose to install the suggested plugins.
+Create Your Admin User:
+
+Follow the prompts to set up an admin user.
+Step 2: Create a New Pipeline Job
+Create a New Job:
+
+From the Jenkins dashboard, click on “New Item” in the left sidebar.
+Enter a name for your pipeline and select “Pipeline” as the project type. Click “OK”.
+Configure Your Pipeline:
+
+In the configuration page, you’ll find several sections. Focus on the “Pipeline” section:
+Definition: Select “Pipeline script” or “Pipeline script from SCM” if you want to retrieve your script from a source code repository.
+Pipeline script: Write your pipeline script in Groovy syntax.
+Step 3: Write Your Pipeline Script
+Here’s a simple example of a pipeline script:
+
+groovy
+Copy code
+pipeline {
+    agent any 
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building...'
+                // Add build commands here, e.g., sh 'mvn clean package'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+                // Add test commands here, e.g., sh 'mvn test'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+                // Add deployment commands here, e.g., sh 'deploy.sh'
+            }
+        }
+    }
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
+}
+Step 4: Save and Build the Pipeline
+Save the Pipeline:
+
+Click the “Save” button at the bottom of the configuration page.
+Build the Pipeline:
+
+From the pipeline job page, click on “Build Now” in the left sidebar. This will start executing your pipeline.
+View Build Output:
+
+Click on the build number in the “Build History” section to view the console output of the build. This is where you’ll see the logs of each stage defined in your pipeline.
+
+
+*********************zyada detailed boli toh do this:**************************
+
+
+a Pipeline of Jobs Using Maven in Jenkins and Deploy to Apache Tomcat
+Step 1: Set Up Apache Tomcat Server
+Download Apache Tomcat:
+
+Go to the official Apache Tomcat website.
+Download the Tomcat 9.x binary distribution (e.g., .zip or .tar.gz).
+Install Apache Tomcat:
+
+Extract the downloaded file to a preferred location on your machine (e.g., C:\apache-tomcat-9.0.52).
+Change the Port:
+
+Navigate to the Tomcat directory and find the conf folder.
+Open the server.xml file in a text editor.
+Search for <Connector port="8080" and change it to <Connector port="9090" to avoid conflicts with Jenkins.
+Save the file.
+Start Tomcat Server:
+
+Go to the bin directory inside your Tomcat folder (e.g., C:\apache-tomcat-9.0.52\bin).
+Run the startup.bat file (on Windows) or catalina.sh start (on Unix/Linux).
+Open your browser and navigate to http://localhost:9090. You should see the Tomcat homepage.
+Step 2: Set Up Jenkins Pipeline
+Open Jenkins:
+
+Go to http://localhost:8080 in your web browser to access Jenkins.
+Create a New Pipeline Job:
+
+On the Jenkins dashboard, click on “New Item”.
+Enter a name for your pipeline (e.g., Maven_Pipeline_Example).
+Select “Pipeline” and click “OK”.
+Configure the Pipeline:
+
+Scroll down to the “Pipeline” section.
+In the “Definition” dropdown, select “Pipeline script”.
+Write Your Pipeline Script:
+
+Replace the default script with the following code, customized for your GitHub repository:
+groovy
+Copy code
+pipeline {
+    agent any 
+    tools { 
+        maven 'Maven 3.8.1' 
+    }
+    
+    stages {
+        stage('Git Clone') { 
+            steps { 
+                git 'https://github.com/Apoorva-Practical/Practical.git' 
+            } 
+        }
+        
+        stage('Build') { 
+            steps { 
+                bat 'mvn clean install' 
+            } 
+        }
+        
+        stage('Deploy') { 
+            steps { 
+                bat 'copy C:\\Users\\app\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\Maven_Pipeline_Example\\target\\your-webapp.war C:\\Users\\app\\Downloads\\Tomcat-9\\apache-tomcat-9.0.52\\webapps'
+            } 
+        }
+    }
+}
+Note: Replace your-webapp.war with the actual name of the WAR file generated by your Maven build.
+
+Step 3: Run the Pipeline
+Save the Pipeline:
+
+Click the “Save” button at the bottom of the configuration page.
+Build the Pipeline:
+
+From the pipeline job page, click on “Build Now” in the left sidebar.
+Verify the Build:
+
+Once the build is complete, check the console output for any errors.
+Open your browser and go to http://localhost:9090/your-webapp/ (replace your-webapp with the context path of your application) to verify if the application is running.
