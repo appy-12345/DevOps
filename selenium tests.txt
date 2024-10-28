@@ -1,0 +1,242 @@
+ Let’s break this down step by step so you can understand how to run Selenium tests in Jenkins using Maven from scratch. I’ll guide you through creating a project in Eclipse, setting up Maven, and configuring Jenkins to run your tests.
+
+Step 1: Create a Maven Project in Eclipse
+
+1. Open Eclipse:
+
+Start Eclipse and make sure you have the Maven plugin installed. If you have the latest version of Eclipse (like Eclipse IDE for Java Developers), Maven should already be included.
+
+
+
+2. Create a New Maven Project:
+
+Go to File > New > Project...
+
+Select Maven Project and click Next.
+
+Choose a project location or leave it as the default. Click Next.
+
+Select an archetype (you can choose maven-archetype-quickstart) and click Next.
+
+Fill in the Group Id (e.g., com.example) and Artifact Id (e.g., SeleniumMavenTest), then click Finish.
+
+
+
+3. Project Structure:
+
+After the project is created, you’ll see a folder structure. The src/main/java is for your application code, and src/test/java is for your test code.
+
+
+
+
+Step 2: Add Selenium and JUnit Dependencies
+
+1. Open the pom.xml File:
+
+In your project explorer, locate and open pom.xml.
+
+
+
+2. Add Dependencies:
+
+Find the <dependencies> section. If it’s not there, create it. You need to add Selenium and JUnit dependencies. Here’s how it should look:
+
+
+<dependencies>
+    <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-java</artifactId>
+        <version>4.x.x</version> <!-- Replace with the latest version -->
+    </dependency>
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.13.2</version>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+
+
+3. Save the pom.xml File:
+
+Save your changes to the pom.xml file. Maven will automatically download the dependencies.
+
+
+
+
+Step 3: Write Selenium Test Scripts
+
+1. Create a Test Class:
+
+In src/test/java, create a new Java class (e.g., SampleTest).
+
+
+
+2. Write Your Test Code:
+
+Here’s a simple example of a Selenium test using JUnit:
+
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class SampleTest {
+    WebDriver driver;
+
+    @Before
+    public void setup() {
+        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver"); // Update this path
+        driver = new ChromeDriver();
+    }
+
+    @Test
+    public void openGoogle() {
+        driver.get("https://www.google.com");
+        assertEquals("Google", driver.getTitle());
+    }
+
+    @After
+    public void teardown() {
+        driver.quit();
+    }
+}
+
+Explanation:
+
+@Before: This method runs before each test. It sets up the Chrome driver.
+
+@Test: This is where the actual test is written. It checks if Google opens correctly.
+
+@After: This method runs after each test, closing the browser.
+
+
+
+
+
+Step 4: Set Up Jenkins for Maven
+
+1. Install Maven in Jenkins:
+
+Go to your Jenkins dashboard.
+
+Click on Manage Jenkins > Global Tool Configuration.
+
+Under the Maven section, click Add Maven.
+
+You can either specify the installation path of Maven or let Jenkins install it automatically.
+
+
+
+2. Install JDK in Jenkins:
+
+In the same Global Tool Configuration page, make sure you have a JDK configured. If not, add a new JDK installation.
+
+
+
+
+Step 5: Create a Jenkins Job
+
+1. Create a New Job:
+
+Go back to the Jenkins dashboard and click New Item.
+
+Enter a name for your job (e.g., SeleniumMavenTest) and select Freestyle project. Click OK.
+
+
+
+2. Source Code Management:
+
+In the job configuration, find the Source Code Management section.
+
+Select Git and provide the URL of your GitHub repository containing the Selenium project. Add credentials if necessary.
+
+
+
+3. Build Triggers:
+
+Choose how you want to trigger builds (e.g., Build periodically or Poll SCM).
+
+
+
+4. Build Environment:
+
+You can leave this as default unless you have specific requirements.
+
+
+
+
+Step 6: Configure Maven Build in Jenkins Job
+
+1. Build Section:
+
+In the Build section, click Add build step, then select Invoke top-level Maven targets.
+
+In the Goals field, enter:
+
+
+clean test
+
+This command cleans the previous build and runs the tests.
+
+
+
+2. Profiles:
+
+If you have specific Maven profiles, you can specify them here. For basic usage, clean test is sufficient.
+
+
+
+
+Step 7: Add Post-Build Actions
+
+1. JUnit Test Reports:
+
+In the Post-build Actions section, click Publish JUnit test result report.
+
+Specify the path to the test result file, which is typically target/surefire-reports/*.xml.
+
+
+
+2. HTML Report (Optional):
+
+If you generate an HTML report, you can publish it using the Publish HTML Reports plugin.
+
+
+
+
+Step 8: Trigger a Build and Monitor Results
+
+1. Save Your Configuration:
+
+Click Save to save the job configuration.
+
+
+
+2. Trigger the Build:
+
+On the job page, click Build Now to start your build.
+
+
+
+3. View Console Output:
+
+Click on the build number to see the console output. This will show you the logs of your build execution and the results of your Selenium tests.
+
+
+
+
+Summary
+
+Creating a Maven project in Eclipse allows you to structure your tests properly and manage dependencies easily.
+
+Adding Selenium and JUnit dependencies enables you to write and run Selenium tests.
+
+Setting up Jenkins lets you automate the execution of these tests, allowing you to integrate them into your CI/CD pipeline.
+
+Post-build actions ensure you can track test results and monitor build health.
+
+

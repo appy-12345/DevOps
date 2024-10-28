@@ -1,0 +1,236 @@
+I’ll walk you through each step involved in creating a Docker image for a simple web application with a static HTML page. This guide will cover every detail, so you understand each line of the Dockerfile and all the commands needed.
+
+Overview of What We’re Doing
+
+The goal here is to set up a basic web application using Docker. We’ll use Nginx, a popular web server, to serve a static HTML page. Docker will help us package the HTML file and Nginx configuration so we can run it as a container.
+
+
+---
+
+Step 1: Create the HTML Page
+
+1. Create a New Directory for Your Project:
+
+Start by creating a new directory (folder) on your computer where you’ll store the files for this project. You can name it html_app or something similar.
+
+
+mkdir html_app
+cd html_app
+
+
+2. Create an HTML File (index.html):
+
+Inside the html_app directory, create a file called index.html. This file will contain the HTML content for our web application.
+
+Use a text editor to open index.html and add the following HTML code:
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample HTML Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            font-size: 1.2em;
+        }
+        a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to My Sample HTML Page</h1>
+    <p>This is a simple HTML page to demonstrate the structure of an HTML document.</p>
+    <h2>Here's an Image:</h2>
+    <img src="https://via.placeholder.com/400" alt="Sample Image" />
+    <h2>Learn More:</h2>
+    <p>For more information, visit <a href="https://www.example.com" target="_blank">Example.com</a>.</p>
+</body>
+</html>
+
+Explanation:
+
+This is a basic HTML document with some inline CSS styling.
+
+It includes a title, headings, a paragraph, an image, and a link.
+
+
+
+
+
+
+---
+
+Step 2: Create a Dockerfile
+
+A Dockerfile is a script with instructions to create a Docker image. We’ll create a Dockerfile to set up Nginx as our web server and configure it to serve the index.html file.
+
+1. Create the Dockerfile:
+
+In the html_app directory, create a new file named Dockerfile (with no file extension).
+
+Open the Dockerfile and add the following instructions:
+
+# Use the Nginx base image from Docker Hub
+FROM nginx:alpine
+
+# Copy the HTML file to the Nginx server’s HTML directory
+COPY index.html /usr/share/nginx/html/index.html
+
+# Expose port 80 to allow web traffic
+EXPOSE 80
+
+Explanation of each line:
+
+FROM nginx:alpine: This tells Docker to use the official Nginx image with the Alpine Linux version as the base. Alpine Linux is a lightweight version, so it makes the Docker image smaller.
+
+COPY index.html /usr/share/nginx/html/index.html: This line copies index.html from your local html_app directory into the appropriate directory in the Nginx container (/usr/share/nginx/html). By default, Nginx serves content from this directory, so placing index.html here ensures it will be the main page Nginx shows when the container is accessed.
+
+EXPOSE 80: This tells Docker that the container will listen on port 80. Port 80 is the standard port for HTTP, which is the protocol used by web browsers.
+
+
+
+
+
+
+---
+
+Step 3: Build the Docker Image
+
+Now that you have both the index.html file and Dockerfile in the html_app directory, you can build the Docker image.
+
+1. Open a Terminal:
+
+Navigate to the html_app directory in your terminal.
+
+
+cd path/to/html_app
+
+
+2. Build the Docker Image:
+
+Run the following command to build the Docker image:
+
+docker build -t html_app .
+
+Explanation:
+
+docker build: This command tells Docker to build an image.
+
+-t html_app: The -t flag allows you to tag (name) the image. Here, we’re naming it html_app.
+
+.: The dot specifies the current directory as the build context, where Docker will look for the Dockerfile and other files.
+
+
+Output:
+
+Docker will execute each line in the Dockerfile and show the output for each step. Once complete, you should see a message indicating the image was built successfully.
+
+
+
+
+3. Verify the Image was Created:
+
+To confirm the image was created, list all Docker images:
+
+docker images
+
+You should see html_app listed.
+
+
+
+
+
+---
+
+Step 4: Run the Docker Container
+
+Now that you have the Docker image, you can run it as a container.
+
+1. Run the Container:
+
+Use the following command to start a container from the html_app image:
+
+docker run -p 80:80 html_app
+
+Explanation:
+
+docker run: This command creates and runs a new container.
+
+-p 80:80: This maps port 80 on your local machine (left side) to port 80 inside the Docker container (right side). This allows you to access the web server running in the container on your local machine’s port 80.
+
+html_app: This is the name of the image we built earlier.
+
+
+How It Works:
+
+Docker starts the container with Nginx, which serves the index.html file on port 80. By mapping the container’s port 80 to your machine’s port 80, you can access the HTML page in your web browser.
+
+
+
+
+2. View the Web Page:
+
+Open a web browser and go to http://localhost:80. You should see the HTML page we created, with the text, styles, and image.
+
+
+
+
+
+---
+
+Summary of Docker Commands
+
+Here’s a recap of the commands used in this project:
+
+Build the Docker image:
+
+docker build -t html_app .
+
+Run the Docker container:
+
+docker run -p 80:80 html_app
+
+
+
+---
+
+Additional Tips
+
+Stop the Container:
+
+To stop the container, press CTRL+C in the terminal where it’s running.
+
+Alternatively, you can list running containers with docker ps, find the container ID, and stop it with:
+
+docker stop <container_id>
+
+
+View Running Containers:
+
+docker ps
+
+Remove an Image:
+
+docker rmi html_app
+
+
+
+---
+
+Conclusion
+
+This exercise demonstrates how to create a Docker container that serves a static HTML page using Nginx. The Dockerfile instructions allow you to build an image with everything needed to run this simple web application, and Docker makes it easy to package and deploy it in a consistent environment.
